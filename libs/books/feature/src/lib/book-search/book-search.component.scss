@@ -68,5 +68,17 @@ form {
   justify-content: center;
   min-height: 50vh;
   font-size: 1.5rem;
-  color: $gray40;
+  color: $gray70;
+}
+
+@media (min-width: 100px) {
+  .book-grid { grid-template-columns: repeat(1, 1fr); }
+}
+
+@media (min-width: 600px) {
+  .book-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 900px) {
+  .book-grid { grid-template-columns: repeat(3, 1fr); }
 }
