@@ -10,8 +10,8 @@ import {
 } from '@tmo/books/data-access';
 import { FormBuilder } from '@angular/forms';
 import { Book } from '@tmo/shared/models';
-import { Observable } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { delay, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'tmo-book-search',
@@ -19,9 +19,9 @@ import { delay } from 'rxjs/operators';
   styleUrls: ['./book-search.component.scss']
 })
 export class BookSearchComponent implements OnInit, OnDestroy {
-  books: ReadingListBook[];
+  private books: ReadingListBook[];
   
-  private storeSubscription;
+  private destroy = new Subject();
 
   searchForm = this.formBuilder.group({
     term: ''
@@ -37,7 +37,9 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.storeSubscription= this.store.select(getAllBooks).subscribe(books => { ///////////////NEW////////////////
+    this.store.select(getAllBooks).pipe(
+      takeUntil(this.destroy)
+    ).subscribe(books => {
       this.books = books;
     });
   }
@@ -49,17 +51,15 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   addBookToReadingList(book: Book) {
-    this.store.dispatch(addToReadingList({ book }));
-    
-    //this.store.dispatch(failedAddToReadingList({ book }));
+    this.store.dispatch(addToReadingList({ book }));  
   }
+  
 
-  searchExample() {
-    this.searchForm.controls.term.setValue('javascript');
-    this.searchBooks();
-  }
+  searchBooks(input?) {
+    if(input){
+      this.searchForm.controls.term.setValue(`${input}`);
+    }
 
-  searchBooks() {
     if (this.searchForm.value.term) {
       this.store.dispatch(searchBooks({ term: this.searchTerm }));
     } else {
@@ -67,12 +67,10 @@ export class BookSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  ///////////////NEW////////////////
+  
   ngOnDestroy(){
-    if(this.storeSubscription){
-      this.storeSubscription.unsubscribe();
-    }
-    
+    this.destroy.next();
+    this.destroy.complete();
   }
 
 }

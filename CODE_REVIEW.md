@@ -1,19 +1,19 @@
 
 # Code Review
-
+google (page load optimizations in angular) application laod performance in angular. that is check for unessarry dependency libraries
 ## Problems 
-1. Potential memory leak from observable in `ngOnInit()` in `libs/books/feature/src/lib/book-search/book-search.component.ts`. The observable should be unsubscribed from using `ngOnDestroy()` **--Fixed**
+1. Potential memory leak from observable in `ngOnInit()` in `libs/books/feature/src/lib/book-search/book-search.component.ts`. The observable should be unsubscribed from using `ngOnDestroy()`
+    The other solution would be to use `pipe()` with `takeUntil()` operator and a `Subject` to unsubscribe from the observable in `ngOnInit()`  **--Fixed**
 
-2. Files with different functions are grouped together in `libs/books/data-access/src/lib/+state`. Actions, reducer and selector files should be grouped according to their function and their reference undated everywhere
+2. --verify-- `/Users/chukwukaodinakaobieyisi/Documents/web-ui-developer-puzzle-master-prod/libs/books/feature/src/lib/total-count/total-count.component.scss` is empty so remove
 
 3. No type tags added in `nx.json` and defined in `tslint.json`. Tags should be added to control folder access between apps in a mono repo
 
-4. This file `test-setup.ts` exists in both the `apps` and `libs` folders (`apps/okreads/browser/src/` and `libs/books/feature/src/`). It should be removed from `apps` and    should only exist in `libs` since it is shared.
+4. The method `searchExample()` in `book-search.component.ts` is unecessary because you can modify `searchBooks()` to do the same thing. **--Fixed**
 
 5. Bad naming conviention of `fb: FormBuilder` in `libs/books/feature/src/lib/book-search/book-search.component.ts`. Avoid using single and double character name declaration. Give specific names to variables and methods **--Fixed**
 
-6. Access modifiers like `private` are not used in class variables to encourage encapsulation. **--Fixed**
-
+6. -
 7. Lack of code documentation or comments to help make the code easy to read and understand
 
 
@@ -38,7 +38,9 @@
 * In mobile mode, screen content does not resize. Grid is not completely responsive. 
     Fixed by adding media queries to `libs/books/feature/src/lib/book-search/book-search.component.scss`.**--Fixed**
 
-* Author does not show up in one of the cards
+* Author does not show up in one of the cards. And publisher does not show up in another. I believe this omission comes from the external google api where the books are being retrived from (`https://www.googleapis.com/books/`).
+![](./screenshot1.png)
+![](./screenshot2.png)
 
 
 
